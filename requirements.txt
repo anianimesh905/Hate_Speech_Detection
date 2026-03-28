@@ -1,0 +1,10 @@
+streamlit
+speechrecognition
+pydub
+gensim
+scikit-learn
+nltk
+numpy
+pandas
+joblib
+datasets
