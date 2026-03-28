@@ -8,3 +8,4 @@ numpy<2.0.0
 pandas
 joblib
 datasets
+matplotlib
