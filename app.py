@@ -81,6 +81,10 @@ with tab1:
             # Ensure prob_hate is bounded 0-1
             prob_hate = float(prob_hate)
             prob_hate = max(0.0, min(1.0, prob_hate))
+            
+            # Custom sensitivity threshold (catch milder offenses)
+            # Default SVM is 0.5, we lower it to 0.3 to trigger "Mild" severity
+            prediction = 1 if prob_hate > 0.30 else 0
 
             st.subheader("🔍 Prediction Result")
 
