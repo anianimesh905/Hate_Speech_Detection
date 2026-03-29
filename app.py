@@ -76,35 +76,38 @@ with tab1:
             st.subheader("📝 Transcription")
             st.write(text)
 
-            prediction, confidence = predict_text(text)
+            prediction, prob_hate = predict_text(text)
 
-            # Convert decision confidence to 0–1 if needed
-            confidence = float(confidence)
-            confidence = max(0.0, min(1.0, confidence))
+            # Ensure prob_hate is bounded 0-1
+            prob_hate = float(prob_hate)
+            prob_hate = max(0.0, min(1.0, prob_hate))
 
             st.subheader("🔍 Prediction Result")
 
             if prediction == 1:
                 st.error("🚨 Hate Speech Detected")
+                
+                # Severity
+                if prob_hate < 0.65:
+                    severity = "Mild"
+                elif prob_hate < 0.85:
+                    severity = "Offensive"
+                else:
+                    severity = "Severe Hate"
+                
+                st.write(f"**Severity Level:** {severity}")
+                confidence = prob_hate
             else:
                 st.success("✅ Clean Speech")
-
-            # Severity
-            if confidence < 0.4:
-                severity = "Mild"
-            elif confidence < 0.7:
-                severity = "Offensive"
-            else:
-                severity = "Severe Hate"
-
-            st.write(f"**Severity Level:** {severity}")
+                severity = "None"
+                confidence = 1.0 - prob_hate
 
             # -----------------------------
             # Confidence Progress Bar
             # -----------------------------
             st.subheader("📊 Prediction Confidence")
             st.progress(confidence)
-            st.write(f"{confidence*100:.2f}% confident")
+            st.write(f"{confidence*100:.2f}% confident in prediction")
 
             # -----------------------------
             # Probability Bar Chart
@@ -112,8 +115,9 @@ with tab1:
             st.subheader("📈 Probability Distribution")
 
             fig, ax = plt.subplots()
-            ax.bar(["Non-Hate", "Hate"], [1-confidence, confidence])
+            ax.bar(["Non-Hate", "Hate"], [1-prob_hate, prob_hate], color=["green", "red"])
             ax.set_ylabel("Probability")
+            ax.set_ylim(0, 1)
             st.pyplot(fig)
 
             # -----------------------------
